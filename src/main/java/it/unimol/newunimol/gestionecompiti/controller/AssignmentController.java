@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1/assignement")
-@Tag(name = "Assignement", description = "API per la gestione dei compiti")
-public class AssignementController {
+@RequestMapping("/api/v1/assignment")
+@Tag(name = "Assignment", description = "API per la gestione dei compiti")
+public class AssignmentController {
     @Autowired
-    private AssignementService assignementService;
+    private AssignmentService assignmentService;
 
-    public void createNewAssignement() {
+    public void createNewAssignment() {
         // prende in input un dto che
         // contiene : Titolo, descrizione, data di scadenza, allegati
     }

@@ -1,6 +1,6 @@
 package it.unimol.newunimol.gestionecompiti.dto;
 
-public record AssignementCreationDto(
+public record AssignmentCreationDto(
                 String id,
                 String titolo,
                 String descrizione,

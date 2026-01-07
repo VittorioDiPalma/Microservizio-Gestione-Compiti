@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "assignements")
+@Table(name = "assignments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Assignement {
+public class Assignment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Assignement {
     @Column(name = "description", nullable = false, length = 500)
     private String description;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDate creationDate;
 
     @NotNull
