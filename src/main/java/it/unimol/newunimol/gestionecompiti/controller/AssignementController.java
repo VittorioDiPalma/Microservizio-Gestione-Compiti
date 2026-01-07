@@ -1,4 +1,4 @@
-package com.example.controller;
+package it.unimol.newunimol.gestionecompiti.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
