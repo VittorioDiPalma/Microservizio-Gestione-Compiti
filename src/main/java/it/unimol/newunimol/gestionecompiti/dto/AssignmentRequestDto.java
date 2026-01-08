@@ -6,7 +6,7 @@ public record AssignmentRequestDto(
     String title,
     String description,
     LocalDate dueDate,
-    Long courseId,
+    String courseId,
     String professorId,
     String attachmentPath
 ) {}

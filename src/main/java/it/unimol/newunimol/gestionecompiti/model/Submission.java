@@ -1,28 +1,29 @@
 package it.unimol.newunimol.gestionecompiti.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "submissions")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Submission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    private String id;
 
     @NotNull
     @Column(name = "assignment_id", nullable = false)
-    private Long assignmentId;
+    private String assignmentId;
 
-    @NotBlank
+    @NotNull
     @Column(name = "student_id", nullable = false)
     private String studentId;
 
@@ -37,9 +38,10 @@ public class Submission {
     @Column(name = "status", nullable = false)
     private SubmissionStatus status;
 
-    @Column(name = "grade")
-    private Integer grade;
-
-    @Column(name = "feedback", length = 2000)
-    private String feedback;
+    @PrePersist
+    public void ensureId(){
+        if (this.id == null || this.id.isEmpty()) {
+            this.id = UUID.randomUUID().toString();
+        }
+    }
 }

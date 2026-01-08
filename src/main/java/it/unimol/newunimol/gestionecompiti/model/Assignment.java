@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.UUID;
+
+
 @Entity
 @Table(name = "assignments")
 @Data
@@ -15,9 +18,8 @@ import lombok.AllArgsConstructor;
 public class Assignment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private long id;
+    private String id;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
@@ -37,9 +39,16 @@ public class Assignment {
 
     @NotNull
     @Column(name = "course_id", nullable = false)
-    private Long courseId;
+    private String courseId;
 
     @NotNull
     @Column(name = "professor_id", nullable = false)
     private String professorId;
+
+    @PrePersist
+    public void ensureId(){
+        if (this.id == null || this.id.isEmpty()) {
+            this.id = UUID.randomUUID().toString();
+        }
+    }
 }

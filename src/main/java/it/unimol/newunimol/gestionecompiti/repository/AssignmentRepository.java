@@ -7,9 +7,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
+public interface AssignmentRepository extends JpaRepository<Assignment, String> {
 
-    List<Assignment> findByCourseId(Long courseId);
+    List<Assignment> findByCourseId(String courseId);
 
     List<Assignment> findByProfessorId(String professorId);
 
@@ -19,5 +19,5 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     // Trova i compiti di un corso ordinati per data di creazione decrescente
     // (Così l'ultimo creato appare per primo)
-    List<Assignment> findByCourseIdOrderByCreationDateDesc(Long courseId);
+    List<Assignment> findByCourseIdOrderByCreationDateDesc(String courseId);
 }

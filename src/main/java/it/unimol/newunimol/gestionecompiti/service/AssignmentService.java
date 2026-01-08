@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,7 +64,7 @@ public class AssignmentService {
      * @return The assignment data as a response DTO.
      * @throws EntityNotFoundException if no assignment with the given ID exists.
      */
-    public AssignmentResponseDto findById(Long id) {
+    public AssignmentResponseDto findById(String id) {
         return assignmentRepository.findById(id)
                 .map(assignmentConverter::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: " + id));
@@ -78,7 +77,7 @@ public class AssignmentService {
      * @return A list of assignment response DTOs.
      * @throws IllegalArgumentException if the course ID is null.
      */
-    public List<AssignmentResponseDto> getAssignmentsByCourseId(Long courseId) {
+    public List<AssignmentResponseDto> getAssignmentsByCourseId(String courseId) {
         if (courseId == null){
             throw new IllegalArgumentException("ID del corso non valido");
         }
@@ -95,7 +94,7 @@ public class AssignmentService {
      * @param id The ID of the assignment to delete.
      * @return true if the assignment was deleted, false if it did not exist.
      */
-    public boolean deleteAssignmentById(Long id) {
+    public boolean deleteAssignmentById(String id) {
         if (assignmentRepository.existsById(id)) {
             assignmentRepository.deleteById(id);
             return true;
@@ -109,7 +108,7 @@ public class AssignmentService {
      * @param courseId The ID of the course.
      * @return A list of assignment response DTOs.
      */
-    public List<AssignmentResponseDto> getAssignmentsByCourse(Long courseId) {
+    public List<AssignmentResponseDto> getAssignmentsByCourse(String courseId) {
         if(courseId == null) {
             throw new IllegalArgumentException("ID del corso non valido");
         }

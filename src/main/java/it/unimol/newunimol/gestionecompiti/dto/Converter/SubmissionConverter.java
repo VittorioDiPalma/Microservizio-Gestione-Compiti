@@ -32,9 +32,7 @@ public class SubmissionConverter {
             entity.getStudentId(),
             entity.getFilePath(),
             entity.getSubmissionDate(),
-            entity.getStatus(),
-            entity.getGrade(),
-            entity.getFeedback()
+            entity.getStatus()
         );
     }
     
