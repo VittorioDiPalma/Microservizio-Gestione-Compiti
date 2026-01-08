@@ -32,8 +32,8 @@ public class Assignment {
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
-    @Column(name = "attachments")
-    private String attachments;
+    @Column(name = "attachment_path")
+    private String attachmentPath;
 
     @NotNull
     @Column(name = "course_id", nullable = false)
