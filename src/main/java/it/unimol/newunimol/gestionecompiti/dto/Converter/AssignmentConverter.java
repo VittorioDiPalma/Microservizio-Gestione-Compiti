@@ -1,4 +1,4 @@
-package it.unimol.newunimol.gestionecompiti.dto.Converter;
+package it.unimol.newunimol.gestionecompiti.dto.converter;
 
 import it.unimol.newunimol.gestionecompiti.dto.AssignmentRequestDto;
 import it.unimol.newunimol.gestionecompiti.dto.AssignmentResponseDto;
