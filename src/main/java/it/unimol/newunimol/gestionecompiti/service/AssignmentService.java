@@ -5,117 +5,160 @@ import it.unimol.newunimol.gestionecompiti.dto.AssignmentResponseDto;
 import it.unimol.newunimol.gestionecompiti.dto.converter.AssignmentConverter;
 import it.unimol.newunimol.gestionecompiti.model.Assignment;
 import it.unimol.newunimol.gestionecompiti.repository.AssignmentRepository;
+import it.unimol.newunimol.gestionecompiti.repository.SubmissionRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class AssignmentService {
-
+    
     @Autowired
     private AssignmentRepository assignmentRepository;
-
+    
+    @Autowired
+    private SubmissionRepository submissionRepository;
+    
     @Autowired
     private AssignmentConverter assignmentConverter;
-
+    
     /**
-     * This method creates a new assignment based on the provided request data.
-     * 
-     * @param request The data for the assignment to be created.
-     * @throws IllegalArgumentException if the request data is invalid.
+     * Crea un nuovo compito (DOCENTE)
      */
     public AssignmentResponseDto createAssignment(AssignmentRequestDto request) {
-        if (request == null ||
-            request.title() == null || request.title().isEmpty() ||
-            request.description() == null || request.description().isEmpty() ||
-            request.dueDate() == null ||
-            request.courseId() == null ||
-            request.professorId() == null || request.professorId().isEmpty()
-        ) {
-            throw new IllegalArgumentException("Dati del compito non validi");
+        if (request.dueDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("La data di scadenza deve essere futura");
         }
-
-        if (request.dueDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("La data di scadenza è già passata");
-        }   
-
-        if (request.attachmentPath() != null && request.attachmentPath().length() > 255) {
-            throw new IllegalArgumentException("Il percorso dell'allegato è troppo lungo");
-        }
-
-        Assignment assignment = assignmentConverter.toEntity(request);
-        assignment.setCreationDate(LocalDate.now());
         
-        Assignment saved = assignmentRepository.save(assignment);
-        return assignmentConverter.toDto(saved);
+        Assignment assignment = assignmentConverter.toEntity(request);
+        assignment = assignmentRepository.save(assignment);
+        
+        int totalSubmissions = 0;
+        return assignmentConverter.toDto(assignment, totalSubmissions);
     }
-
+    
     /**
-     * This method retrieves an assignment by its ID.
-     * 
-     * @param id The ID of the assignment to retrieve.
-     * @return The assignment data as a response DTO.
-     * @throws EntityNotFoundException if no assignment with the given ID exists.
+     * Trova un compito per ID
      */
     public AssignmentResponseDto findById(String id) {
-        return assignmentRepository.findById(id)
-                .map(assignmentConverter::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: " + id));
+        Assignment assignment = assignmentRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: " + id));
+        
+        int totalSubmissions = submissionRepository.countByAssignmentId(id);
+        return assignmentConverter.toDto(assignment, totalSubmissions);
     }
-
+    
     /**
-     * This method retrieves all assignments for a specific course.
-     * 
-     * @param courseId The ID of the course.
-     * @return A list of assignment response DTOs.
-     * @throws IllegalArgumentException if the course ID is null.
-     */
-    public List<AssignmentResponseDto> getAssignmentsByCourseId(String courseId) {
-        if (courseId == null){
-            throw new IllegalArgumentException("ID del corso non valido");
-        }
-
-        return assignmentRepository.findByCourseId(courseId)
-                .stream()
-                .map(assignmentConverter::toDto)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Deletes an assignment by its ID.
-     * 
-     * @param id The ID of the assignment to delete.
-     * @return true if the assignment was deleted, false if it did not exist.
-     */
-    public boolean deleteAssignmentById(String id) {
-        if (assignmentRepository.existsById(id)) {
-            assignmentRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * This method retrieves all assignments for a specific course, ordered by creation date descending.
-     * 
-     * @param courseId The ID of the course.
-     * @return A list of assignment response DTOs.
+     * Ottiene tutti i compiti di un corso (STUDENTI + DOCENTI)
      */
     public List<AssignmentResponseDto> getAssignmentsByCourse(String courseId) {
-        if(courseId == null) {
-            throw new IllegalArgumentException("ID del corso non valido");
+        List<Assignment> assignments = assignmentRepository.findByCourseId(courseId);
+        
+        return assignments.stream()
+            .map(assignment -> {
+                int totalSubmissions = submissionRepository.countByAssignmentId(assignment.getId());
+                return assignmentConverter.toDto(assignment, totalSubmissions);
+            })
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Ottiene tutti i compiti di un docente (DOCENTE)
+     */
+    public List<AssignmentResponseDto> getAssignmentsByTeacher(String teacherId) {
+        List<Assignment> assignments = assignmentRepository.findByTeacherId(teacherId);
+        
+        return assignments.stream()
+            .map(assignment -> {
+                int totalSubmissions = submissionRepository.countByAssignmentId(assignment.getId());
+                return assignmentConverter.toDto(assignment, totalSubmissions);
+            })
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Ottiene i compiti in scadenza per uno studente (NUOVO)
+     * Nota: Assumiamo che lo studente sia iscritto ai corsi, 
+     * quindi prendiamo i compiti dei suoi corsi in scadenza
+     */
+    public List<AssignmentResponseDto> getUpcomingAssignments(String studentId, int days) {
+        // TODO: In produzione, dovresti chiamare il microservizio "Gestione Iscrizioni"
+        // per ottenere i corsi dello studente. Per ora usiamo una logica semplificata.
+        
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime futureDate = now.plusDays(days);
+        
+        // Query personalizzata: trova tutti gli assignment in scadenza
+        // Per ora restituiamo tutti gli assignment in scadenza (semplificazione)
+        List<Assignment> allAssignments = assignmentRepository.findAll();
+        
+        return allAssignments.stream()
+            .filter(a -> a.getDueDate().isAfter(now) && a.getDueDate().isBefore(futureDate))
+            .filter(a -> !submissionRepository.existsByAssignmentIdAndStudentId(a.getId(), studentId))
+            .map(assignment -> {
+                int totalSubmissions = submissionRepository.countByAssignmentId(assignment.getId());
+                return assignmentConverter.toDto(assignment, totalSubmissions);
+            })
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Ottiene i compiti che lo studente deve ancora consegnare (NUOVO)
+     */
+    public List<AssignmentResponseDto> getPendingAssignments(String studentId) {
+        // TODO: In produzione, filtrare per corsi dello studente
+        LocalDateTime now = LocalDateTime.now();
+        
+        List<Assignment> allAssignments = assignmentRepository.findAll();
+        
+        return allAssignments.stream()
+            .filter(a -> a.getDueDate().isAfter(now)) // Solo compiti non scaduti
+            .filter(a -> !submissionRepository.existsByAssignmentIdAndStudentId(a.getId(), studentId))
+            .map(assignment -> {
+                int totalSubmissions = submissionRepository.countByAssignmentId(assignment.getId());
+                return assignmentConverter.toDto(assignment, totalSubmissions);
+            })
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Modifica un compito esistente (DOCENTE)
+     */
+    public AssignmentResponseDto updateAssignment(String id, AssignmentRequestDto request) {
+        Assignment assignment = assignmentRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: " + id));
+        
+        if (request.dueDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("La data di scadenza deve essere futura");
         }
-
-        return assignmentRepository.findByCourseIdOrderByCreationDateDesc(courseId)
-                .stream()
-                .map(assignmentConverter::toDto)
-                .collect(Collectors.toList());
+        
+        assignment.setTitle(request.title());
+        assignment.setDescription(request.description());
+        assignment.setDueDate(request.dueDate());
+        assignment.setAttachments(request.attachments() != null ? request.attachments() : List.of());
+        
+        assignment = assignmentRepository.save(assignment);
+        
+        int totalSubmissions = submissionRepository.countByAssignmentId(id);
+        return assignmentConverter.toDto(assignment, totalSubmissions);
+    }
+    
+    /**
+     * Elimina un compito (DOCENTE)
+     */
+    public boolean deleteAssignmentById(String id) {
+        if (!assignmentRepository.existsById(id)) {
+            return false;
+        }
+        
+        submissionRepository.deleteByAssignmentId(id);
+        assignmentRepository.deleteById(id);
+        return true;
     }
 }

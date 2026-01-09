@@ -1,14 +1,12 @@
 package it.unimol.newunimol.gestionecompiti.model;
 
-import java.time.LocalDate;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import java.util.UUID;
-
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "assignments")
@@ -16,39 +14,45 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Assignment {
-
+    
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
-    @Column(name = "title", nullable = false, length = 100)
+    
+    @Column(nullable = false)
     private String title;
-
-    @Column(name = "description", nullable = false, length = 500)
+    
+    @Column(nullable = false, length = 2000)
     private String description;
-
-    @Column(name = "creation_date", nullable = false, updatable = false)
-    private LocalDate creationDate;
-
-    @NotNull
-    @Column(name = "due_date", nullable = false)
-    private LocalDate dueDate;
-
-    @Column(name = "attachment_path")
-    private String attachmentPath;
-
-    @NotNull
-    @Column(name = "course_id", nullable = false)
+    
+    @Column(nullable = false)
+    private LocalDateTime dueDate;
+    
+    @Column(nullable = false)
     private String courseId;
-
-    @NotNull
-    @Column(name = "professor_id", nullable = false)
-    private String professorId;
-
+    
+    @Column(nullable = false)
+    private String teacherId;
+    
+    @ElementCollection
+    @CollectionTable(name = "assignment_attachments", joinColumns = @JoinColumn(name = "assignment_id"))
+    @Column(name = "attachment_url")
+    private List<String> attachments = new ArrayList<>();
+    
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    
     @PrePersist
-    public void ensureId(){
-        if (this.id == null || this.id.isEmpty()) {
-            this.id = UUID.randomUUID().toString();
-        }
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

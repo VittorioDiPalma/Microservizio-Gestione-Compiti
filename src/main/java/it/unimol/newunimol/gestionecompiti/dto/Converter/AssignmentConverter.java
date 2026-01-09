@@ -8,36 +8,38 @@ import org.springframework.stereotype.Component;
 @Component
 public class AssignmentConverter {
     
-    public Assignment toEntity(AssignmentRequestDto dto){
-        if(dto == null){
+    public Assignment toEntity(AssignmentRequestDto dto) {
+        if (dto == null) {
             return null;
         }
 
-        Assignment entity = new Assignment();
-        entity.setTitle(dto.title());
-        entity.setDescription(dto.description());
-        entity.setDueDate(dto.dueDate());
-        entity.setCourseId(dto.courseId());
-        entity.setProfessorId(dto.professorId());
-        entity.setAttachmentPath(dto.attachmentPath());
-
-        return entity;
+        Assignment assignment = new Assignment();
+        assignment.setTitle(dto.title());
+        assignment.setDescription(dto.description());
+        assignment.setDueDate(dto.dueDate());
+        assignment.setCourseId(dto.courseId());
+        assignment.setTeacherId(dto.teacherId());
+        assignment.setAttachments(dto.attachments() != null ? dto.attachments() : java.util.List.of());
+        return assignment;
     }
-
-    public AssignmentResponseDto toDto(Assignment entity){
-        if(entity == null){
-            return null;
-        }
-
+    
+    public AssignmentResponseDto toDto(Assignment assignment, int totalSubmissions) {
         return new AssignmentResponseDto(
-            entity.getId(),
-            entity.getTitle(),
-            entity.getDescription(),
-            entity.getCreationDate(),
-            entity.getDueDate(),
-            entity.getAttachmentPath(),
-            entity.getCourseId(),
-            entity.getProfessorId()
+            assignment.getId(),
+            assignment.getTitle(),
+            assignment.getDescription(),
+            assignment.getDueDate(),
+            assignment.getCourseId(),
+            assignment.getTeacherId(),
+            assignment.getAttachments(),
+            assignment.getCreatedAt(),
+            assignment.getUpdatedAt(),
+            totalSubmissions
         );
+    }
+    
+    //Without total submissions
+    public AssignmentResponseDto toDto(Assignment assignment) {
+        return toDto(assignment, 0);
     }
 }

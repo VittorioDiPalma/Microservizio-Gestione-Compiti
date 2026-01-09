@@ -1,12 +1,12 @@
 package it.unimol.newunimol.gestionecompiti.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "submissions")
@@ -14,34 +14,36 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Submission {
-
+    
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
-    @NotNull
-    @Column(name = "assignment_id", nullable = false)
+    
+    @Column(nullable = false)
     private String assignmentId;
-
-    @NotNull
-    @Column(name = "student_id", nullable = false)
+    
+    @Column(nullable = false)
     private String studentId;
-
-    @NotNull
-    @Column(name = "submission_date", nullable = false)
-    private LocalDateTime submissionDate;
-
-    @Column(name = "file_path")
-    private String filePath;
-
+    
+    @Column(length = 5000)
+    private String content;
+    
+    @ElementCollection
+    @CollectionTable(name = "submission_attachments", joinColumns = @JoinColumn(name = "submission_id"))
+    @Column(name = "attachment_url")
+    private List<String> attachments = new ArrayList<>();
+    
+    @Column(nullable = false)
+    private LocalDateTime submittedAt;
+    
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private SubmissionStatus status;
-
+    
     @PrePersist
-    public void ensureId(){
-        if (this.id == null || this.id.isEmpty()) {
-            this.id = UUID.randomUUID().toString();
+    protected void onCreate() {
+        if (submittedAt == null) {
+            submittedAt = LocalDateTime.now();
         }
     }
 }
