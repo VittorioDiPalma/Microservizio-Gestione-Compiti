@@ -1,8 +1,7 @@
 package it.unimol.newunimol.gestionecompiti.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
@@ -11,35 +10,33 @@ import java.time.LocalDateTime;
 @Table(name = "submissions")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Submission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-    @NotNull
-    @Column(name = "assignment_id", nullable = false)
-    private Long assignmentId;
+    @Column(nullable = false)
+    private String assignmentId;
 
-    @NotBlank
-    @Column(name = "student_id", nullable = false)
+    @Column(nullable = false)
     private String studentId;
 
-    @NotNull
-    @Column(name = "submission_date", nullable = false)
-    private LocalDateTime submissionDate;
+    @Column(length = 1000)
+    private String content;
 
-    @Column(name = "file_path")
-    private String filePath;
+    @Column(nullable = false)
+    private LocalDateTime submittedAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private SubmissionStatus status;
 
-    @Column(name = "grade")
-    private Integer grade;
-
-    @Column(name = "feedback", length = 2000)
-    private String feedback;
+    @PrePersist
+    protected void onCreate() {
+        if (submittedAt == null) {
+            submittedAt = LocalDateTime.now();
+        }
+    }
 }

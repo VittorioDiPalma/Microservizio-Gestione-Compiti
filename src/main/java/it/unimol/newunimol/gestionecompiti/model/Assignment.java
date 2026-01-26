@@ -1,11 +1,10 @@
 package it.unimol.newunimol.gestionecompiti.model;
 
-import java.time.LocalDate;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assignments")
@@ -15,31 +14,38 @@ import lombok.AllArgsConstructor;
 public class Assignment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false, length = 500)
+    @Column(nullable = false, length = 2000)
     private String description;
 
-    @Column(name = "creation_date", nullable = false, updatable = false)
-    private LocalDate creationDate;
+    @Column(nullable = false)
+    private LocalDateTime dueDate;
 
-    @NotNull
-    @Column(name = "due_date", nullable = false)
-    private LocalDate dueDate;
+    @Column(nullable = false)
+    private String courseId;
 
-    @Column(name = "attachments")
-    private String attachments;
+    @Column(nullable = false)
+    private String teacherId;
 
-    @NotNull
-    @Column(name = "course_id", nullable = false)
-    private Long courseId;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @NotNull
-    @Column(name = "professor_id", nullable = false)
-    private String professorId;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

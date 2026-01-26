@@ -32,4 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 
+# Variabili d'ambiente (NON COMMITTARE!)
+.env
+.env.local
+.env.production
+
 GuidaAlProgetto.txt
+.Gestione-Utenti-e-Ruoli-main/
