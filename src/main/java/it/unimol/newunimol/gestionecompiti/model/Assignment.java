@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Assignment {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
