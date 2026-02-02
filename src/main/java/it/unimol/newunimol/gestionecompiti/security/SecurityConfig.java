@@ -1,5 +1,6 @@
 package it.unimol.newunimol.gestionecompiti.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +60,17 @@ public class SecurityConfig {
                 // STATELESS: Spring Security non crea/usa sessioni HTTP
                 // Ogni richiesta deve contenere il token JWT
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            
+            // Gestione delle eccezioni di autenticazione
+            .exceptionHandling(exception -> exception
+                // Quando una richiesta non autenticata prova ad accedere a un endpoint protetto,
+                // restituisci 401 Unauthorized invece di 403 Forbidden
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Non autenticato\", \"message\": \"Token JWT mancante o non valido\"}");
+                })
             )
             
             // Aggiungi il filtro JWT prima del filtro di autenticazione standard

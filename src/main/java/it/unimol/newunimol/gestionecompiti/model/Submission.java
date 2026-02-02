@@ -18,28 +18,23 @@ public class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    
+
     @Column(nullable = false)
     private String assignmentId;
-    
+
     @Column(nullable = false)
     private String studentId;
-    
-    @Column(length = 5000)
+
+    @Column(length = 1000)
     private String content;
-    
-    @ElementCollection
-    @CollectionTable(name = "submission_attachments", joinColumns = @JoinColumn(name = "submission_id"))
-    @Column(name = "attachment_url")
-    private List<String> attachments = new ArrayList<>();
-    
+
     @Column(nullable = false)
     private LocalDateTime submittedAt;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SubmissionStatus status;
-    
+
     @PrePersist
     protected void onCreate() {
         if (submittedAt == null) {
