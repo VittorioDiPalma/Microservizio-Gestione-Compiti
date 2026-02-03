@@ -92,7 +92,6 @@
 			<artifactId>spring-dotenv</artifactId>
 			<version>4.0.0</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -138,6 +137,74 @@
 							<version>1.18.38</version>
 						</path>
 					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<!-- JaCoCo Plugin per Code Coverage -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<executions>
+					<!-- Prepara l'agent JaCoCo per raccogliere dati di coverage -->
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+
+					<!-- Genera report HTML dopo i test -->
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+
+					<!-- Verifica soglie di coverage (opzionale) -->
+					<execution>
+						<id>check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<!-- Soglia minima Line Coverage: 70% -->
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.70</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- Escludi classi non rilevanti dal coverage -->
+					<excludes>
+						<!-- DTO e Record (solo dati) -->
+						<exclude>**/dto/**/*Dto.class</exclude>
+						<exclude>**/dto/**/*DTO.class</exclude>
+						
+						<!-- Model/Entity (solo POJO) -->
+						<exclude>**/model/**/*.class</exclude>
+						
+						<!-- Configuration classes -->
+						<exclude>**/config/**/*.class</exclude>
+						
+						<!-- Main Application -->
+						<exclude>**/NewUnimolApplication.class</exclude>
+						
+						<!-- Exception classes (solo wrapper) -->
+						<exclude>**/exception/**/*.class</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
