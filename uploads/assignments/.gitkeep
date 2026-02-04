@@ -1,0 +1,2 @@
+# Questo file serve a mantenere la directory uploads/ nel repository Git
+# I file caricati dagli utenti non verranno committati (vedi .gitignore)
