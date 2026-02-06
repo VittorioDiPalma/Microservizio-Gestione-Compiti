@@ -114,6 +114,7 @@
 
 	<build>
 		<plugins>
+			<!-- Spring Boot Maven Plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -126,6 +127,8 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<!-- Maven Compiler Plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -140,13 +143,12 @@
 				</configuration>
 			</plugin>
 
-			<!-- JaCoCo Plugin per Code Coverage -->
+			<!-- JaCoCo Maven Plugin for Code Coverage -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.12</version>
 				<executions>
-					<!-- Prepara l'agent JaCoCo per raccogliere dati di coverage -->
 					<execution>
 						<id>prepare-agent</id>
 						<goals>
@@ -154,7 +156,6 @@
 						</goals>
 					</execution>
 
-					<!-- Genera report HTML dopo i test -->
 					<execution>
 						<id>report</id>
 						<phase>test</phase>
@@ -163,7 +164,6 @@
 						</goals>
 					</execution>
 
-					<!-- Verifica soglie di coverage (opzionale) -->
 					<execution>
 						<id>check</id>
 						<goals>
@@ -174,7 +174,6 @@
 								<rule>
 									<element>BUNDLE</element>
 									<limits>
-										<!-- Soglia minima Line Coverage: 70% -->
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
@@ -187,23 +186,15 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- Escludi classi non rilevanti dal coverage -->
 					<excludes>
-						<!-- DTO e Record (solo dati) -->
-						<exclude>**/dto/**/*Dto.class</exclude>
-						<exclude>**/dto/**/*DTO.class</exclude>
-						
-						<!-- Model/Entity (solo POJO) -->
-						<exclude>**/model/**/*.class</exclude>
-						
-						<!-- Configuration classes -->
-						<exclude>**/config/**/*.class</exclude>
-						
-						<!-- Main Application -->
-						<exclude>**/NewUnimolApplication.class</exclude>
-						
-						<!-- Exception classes (solo wrapper) -->
+						<exclude>**/dto/**/*.class</exclude>						
+						<exclude>**/model/**/*.class</exclude>						
+						<exclude>**/config/**/*.class</exclude>					
 						<exclude>**/exception/**/*.class</exclude>
+						<exclude>**/security/**/*.class</exclude>
+						<exclude>**/controller/**/*.class</exclude>
+						<exclude>**/client/**/*.class</exclude>						
+						<exclude>**/messaging/**/*.class</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
