@@ -1,9 +1,14 @@
 HELP.md
 target/
-uploads/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# Upload directory
+uploads/assignments/*
+uploads/submissions/*
+!uploads/assignments/.gitkeep
+!uploads/submissions/.gitkeep
 
 ### STS ###
 .apt_generated
