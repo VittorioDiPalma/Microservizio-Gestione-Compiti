@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.unimol</groupId>
 	<artifactId>newunimol</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>newunimol</name>
 	<description>Ambiente per il progetto Gestione Compiti</description>
 	<url/>
