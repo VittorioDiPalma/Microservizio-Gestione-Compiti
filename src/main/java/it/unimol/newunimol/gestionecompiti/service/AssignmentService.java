@@ -66,11 +66,11 @@ public class AssignmentService {
         }
 
         // verifica che il docente insegni il corso
-        if (!SecurityUtils.isAdmin() &&
-                !corsiClient.isTeacherOfCourse(request.courseId(), teacherId)) {
+        if (!SecurityUtils.isAdmin()
+                && !corsiClient.isTeacherOfCourse(request.courseId(), teacherId)) {
             throw new AccessDeniedException(
-                    "Non puoi creare compiti per questo corso. " +
-                            "Non sei tra i docenti assegnati al corso: " + request.courseId());
+                    "Non puoi creare compiti per questo corso. "
+                            + "Non sei tra i docenti assegnati al corso: " + request.courseId());
         }
 
         Assignment assignment = assignmentConverter.toEntity(request);
@@ -99,8 +99,8 @@ public class AssignmentService {
             if (!assignment.getTeacherId().equals(callerId)) {
                 if (!iscrizioniClient.isStudentEnrolled(callerId, assignment.getCourseId())) {
                     throw new AccessDeniedException(
-                            "Non sei autorizzato a visualizzare questo assignment. " +
-                                    "Devi essere iscritto al corso: " + assignment.getCourseId());
+                            "Non sei autorizzato a visualizzare questo assignment. "
+                                    + "Devi essere iscritto al corso: " + assignment.getCourseId());
                 }
                 throw new AccessDeniedException("Non sei autorizzato a visualizzare questo assignment");
             }
@@ -128,8 +128,8 @@ public class AssignmentService {
 
                 if (!isEnrolled) {
                     throw new AccessDeniedException(
-                            "Non sei autorizzato a visualizzare i compiti di questo corso. " +
-                                    "Devi essere docente del corso o studente iscritto.");
+                            "Non sei autorizzato a visualizzare i compiti di questo corso. "
+                                    + "Devi essere docente del corso o studente iscritto.");
                 }
             }
         }

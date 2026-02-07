@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-        private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+        private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
         /**
          * Gestisce EntityNotFoundException (404 Not Found)
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ErrorResponse> handleEntityNotFound(
                         EntityNotFoundException ex,
                         HttpServletRequest request) {
-                logger.warn("Entity not found: {}", ex.getMessage());
+                LOGGER.warn("Entity not found: {}", ex.getMessage());
 
                 ErrorResponse error = new ErrorResponse(
                                 HttpStatus.NOT_FOUND.value(),
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ErrorResponse> handleAccessDenied(
                         AccessDeniedException ex,
                         HttpServletRequest request) {
-                logger.warn("Access denied: {}", ex.getMessage());
+                LOGGER.warn("Access denied: {}", ex.getMessage());
 
                 ErrorResponse error = new ErrorResponse(
                                 HttpStatus.FORBIDDEN.value(),
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ErrorResponse> handleIllegalArgument(
                         IllegalArgumentException ex,
                         HttpServletRequest request) {
-                logger.warn("Bad request: {}", ex.getMessage());
+                LOGGER.warn("Bad request: {}", ex.getMessage());
 
                 ErrorResponse error = new ErrorResponse(
                                 HttpStatus.BAD_REQUEST.value(),
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
                                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                                 .collect(Collectors.joining(", "));
 
-                logger.warn("Validation error: {}", errorMessage);
+                LOGGER.warn("Validation error: {}", errorMessage);
 
                 ErrorResponse error = new ErrorResponse(
                                 HttpStatus.BAD_REQUEST.value(),
@@ -104,7 +104,7 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ErrorResponse> handleMaxSizeException(
                         MaxUploadSizeExceededException ex,
                         HttpServletRequest request) {
-                logger.warn("File too large: {}", ex.getMessage());
+                LOGGER.warn("File too large: {}", ex.getMessage());
 
                 ErrorResponse error = new ErrorResponse(
                                 HttpStatus.PAYLOAD_TOO_LARGE.value(),
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ErrorResponse> handleGenericException(
                         Exception ex,
                         HttpServletRequest request) {
-                logger.error("Unexpected error: ", ex);
+                LOGGER.error("Unexpected error: ", ex);
 
                 ErrorResponse error = new ErrorResponse(
                                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

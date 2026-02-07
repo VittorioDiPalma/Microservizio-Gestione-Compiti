@@ -12,4 +12,4 @@ public record SubmissionResponseDto(
     List<String> attachments,
     LocalDateTime submittedAt,
     SubmissionStatus status
-) {}
+) { }

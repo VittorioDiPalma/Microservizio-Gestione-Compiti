@@ -314,8 +314,8 @@ public class FileStorageService {
 
             if (!isTeacher && !isEnrolled) {
                 throw new AccessDeniedException(
-                        "Non puoi visualizzare i file di questo assignment. " +
-                                "Devi essere il docente proprietario o uno studente iscritto al corso.");
+                        "Non puoi visualizzare i file di questo assignment. "
+                                + "Devi essere il docente proprietario o uno studente iscritto al corso.");
             }
         }
 
@@ -373,8 +373,8 @@ public class FileStorageService {
 
             if (!iscrizioniClient.isStudentEnrolled(currentUserId, assignment.getCourseId())) {
                 throw new AccessDeniedException(
-                        "Non puoi accedere a questo file. " +
-                                "Devi essere iscritto al corso: " + assignment.getCourseId());
+                        "Non puoi accedere a questo file. "
+                                + "Devi essere iscritto al corso: " + assignment.getCourseId());
             }
             return;
         }

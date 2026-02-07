@@ -16,7 +16,7 @@ public class CourseDeletedEvent implements Serializable {
     private String deletedBy;
     private Long timestamp;
     
-    public CourseDeletedEvent() {}
+    public CourseDeletedEvent() { }
     
     public CourseDeletedEvent(String eventType, String courseId, String courseName, String deletedBy, Long timestamp) {
         this.eventType = eventType;
@@ -26,29 +26,54 @@ public class CourseDeletedEvent implements Serializable {
         this.timestamp = timestamp;
     }
     
-    public String getEventType() { return eventType; }
-    public void setEventType(String eventType) { this.eventType = eventType; }
+    public String getEventType() {
+        return eventType;
+    }
     
-    public String getCourseId() { return courseId; }
-    public void setCourseId(String courseId) { this.courseId = courseId; }
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
     
-    public String getCourseName() { return courseName; }
-    public void setCourseName(String courseName) { this.courseName = courseName; }
+    public String getCourseId() {
+        return courseId;
+    }
     
-    public String getDeletedBy() { return deletedBy; }
-    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
+    }
     
-    public Long getTimestamp() { return timestamp; }
-    public void setTimestamp(Long timestamp) { this.timestamp = timestamp; }
+    public String getCourseName() {
+        return courseName;
+    }
+    
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+    
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+    
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+    
+    public Long getTimestamp() {
+        return timestamp;
+    }
+    
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
     
     @Override
     public String toString() {
-        return "CourseDeletedEvent{" +
-                "eventType='" + eventType + '\'' +
-                ", courseId='" + courseId + '\'' +
-                ", courseName='" + courseName + '\'' +
-                ", deletedBy='" + deletedBy + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
+        return "CourseDeletedEvent{"
+                + "eventType='" + eventType + '\''
+                + ", courseId='" + courseId + '\''
+                + ", courseName='" + courseName + '\''
+                + ", deletedBy='" + deletedBy + '\''
+                + ", timestamp=" + timestamp
+                + '}';
     }
 }

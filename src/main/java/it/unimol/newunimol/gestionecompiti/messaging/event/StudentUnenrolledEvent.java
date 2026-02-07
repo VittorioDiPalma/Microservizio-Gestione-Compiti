@@ -81,13 +81,13 @@ public class StudentUnenrolledEvent implements Serializable {
 
     @Override
     public String toString() {
-        return "StudentUnenrolledEvent{" +
-                "eventType='" + eventType + '\'' +
-                ", enrollmentId='" + enrollmentId + '\'' +
-                ", studentId='" + studentId + '\'' +
-                ", courseId='" + courseId + '\'' +
-                ", unenrolledBy='" + unenrolledBy + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
+        return "StudentUnenrolledEvent{"
+                + "eventType='" + eventType + '\''
+                + ", enrollmentId='" + enrollmentId + '\''
+                + ", studentId='" + studentId + '\''
+                + ", courseId='" + courseId + '\''
+                + ", unenrolledBy='" + unenrolledBy + '\''
+                + ", timestamp=" + timestamp
+                + '}';
     }
 }

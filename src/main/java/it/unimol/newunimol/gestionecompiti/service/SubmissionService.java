@@ -51,12 +51,13 @@ public class SubmissionService {
         }
 
         Assignment assignment = assignmentRepository.findById(assignmentId)
-                .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: " + assignmentId));
+                .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: "
+                        + assignmentId));
 
         if (!assignment.getTeacherId().equals(teacherId)) {
             throw new AccessDeniedException(
-                    "Non puoi accedere alle consegne di questo compito. " +
-                            "Non sei il proprietario dell'assignment.");
+                    "Non puoi accedere alle consegne di questo compito. "
+                            + "Non sei il proprietario dell'assignment.");
         }
     }
 
@@ -69,14 +70,15 @@ public class SubmissionService {
      */
     public SubmissionResponseDto createSubmission(SubmissionRequestDto request, String assignmentId, String studentId) {
         Assignment assignment = assignmentRepository.findById(assignmentId)
-                .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: " + assignmentId));
+                .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: "
+                        + assignmentId));
 
         if (!SecurityUtils.isAdmin()) {
             boolean isEnrolled = iscrizioniClient.isStudentEnrolled(studentId, assignment.getCourseId());
             if (!isEnrolled) {
                 throw new AccessDeniedException(
-                        "Non puoi consegnare questo compito. " +
-                                "Devi essere iscritto al corso: " + assignment.getCourseId());
+                        "Non puoi consegnare questo compito. "
+                                + "Devi essere iscritto al corso: " + assignment.getCourseId());
             }
         }
 
@@ -194,12 +196,13 @@ public class SubmissionService {
 
         if (!SecurityUtils.isAdmin()) {
             Assignment assignment = assignmentRepository.findById(assignmentId)
-                    .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: " + assignmentId));
+                    .orElseThrow(() -> new EntityNotFoundException("Compito non trovato con ID: "
+                            + assignmentId));
 
             if (!assignment.getTeacherId().equals(callerId)) {
                 throw new AccessDeniedException(
-                        "Non hai i permessi per vedere questa consegna. " +
-                                "Non sei il proprietario dell'assignment.");
+                        "Non hai i permessi per vedere questa consegna. "
+                                + "Non sei il proprietario dell'assignment.");
             }
         }
 
@@ -233,8 +236,8 @@ public class SubmissionService {
 
                 if (!assignment.getTeacherId().equals(callerId)) {
                     throw new AccessDeniedException(
-                            "Non hai i permessi per vedere questa consegna. " +
-                                    "Non sei il proprietario dell'assignment associato.");
+                            "Non hai i permessi per vedere questa consegna. "
+                                    + "Non sei il proprietario dell'assignment associato.");
                 }
             }
         }
@@ -262,8 +265,8 @@ public class SubmissionService {
 
         if (submission.getStatus() == SubmissionStatus.GRADED) {
             throw new IllegalArgumentException(
-                    "Non puoi modificare una consegna già valutata. " +
-                            "Contatta il docente se hai bisogno di modifiche.");
+                    "Non puoi modificare una consegna già valutata. "
+                            + "Contatta il docente se hai bisogno di modifiche.");
         }
 
         Assignment assignment = assignmentRepository.findById(submission.getAssignmentId())
@@ -296,8 +299,8 @@ public class SubmissionService {
 
         if (submission.getStatus() == SubmissionStatus.GRADED) {
             throw new IllegalArgumentException(
-                    "Non puoi eliminare una consegna già valutata. " +
-                            "Contatta il docente se hai bisogno di modifiche.");
+                    "Non puoi eliminare una consegna già valutata. "
+                            + "Contatta il docente se hai bisogno di modifiche.");
         }
 
         Assignment assignment = assignmentRepository.findById(submission.getAssignmentId())

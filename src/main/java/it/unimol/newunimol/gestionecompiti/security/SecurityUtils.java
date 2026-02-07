@@ -12,7 +12,11 @@ import java.util.Collection;
  * SecurityContext.
  */
 @Component
-public class SecurityUtils {
+public final class SecurityUtils {
+
+    private SecurityUtils() {
+        // Private constructor to hide implicit public one
+    }
 
     /**
      * Estrae l'ID dell'utente autenticato dal token JWT.

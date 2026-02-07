@@ -16,8 +16,8 @@ public record SubmissionStatsDto(
     public SubmissionStatsDto {
         if (totalSubmissions != onTimeSubmissions + lateSubmissions + gradedSubmissions + pendingSubmissions) {
             throw new IllegalArgumentException(
-                    "Inconsistenza nelle statistiche: total=" + totalSubmissions +
-                            " ma onTime+late+graded+pending="
+                    "Inconsistenza nelle statistiche: total=" + totalSubmissions
+                            + " ma onTime+late+graded+pending="
                             + (onTimeSubmissions + lateSubmissions + gradedSubmissions + pendingSubmissions));
         }
 
