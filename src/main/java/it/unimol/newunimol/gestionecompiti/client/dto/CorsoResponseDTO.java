@@ -1,5 +1,6 @@
 package it.unimol.newunimol.gestionecompiti.client.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CorsoResponseDTO {
@@ -15,7 +16,7 @@ public class CorsoResponseDTO {
         this.id = id;
         this.nome = nome;
         this.codice = codice;
-        this.docenti = docenti;
+        this.docenti = docenti != null ? new ArrayList<>(docenti) : null;
     }
 
     public String getId() {
@@ -43,11 +44,11 @@ public class CorsoResponseDTO {
     }
 
     public List<DocenteDTO> getDocenti() {
-        return docenti;
+        return docenti != null ? new ArrayList<>(docenti) : null;
     }
 
     public void setDocenti(List<DocenteDTO> docenti) {
-        this.docenti = docenti;
+        this.docenti = docenti != null ? new ArrayList<>(docenti) : null;
     }
 
     /**

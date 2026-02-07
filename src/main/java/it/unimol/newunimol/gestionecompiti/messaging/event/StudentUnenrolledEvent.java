@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public class StudentUnenrolledEvent implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String eventType;
     private String enrollmentId;
     private String studentId;

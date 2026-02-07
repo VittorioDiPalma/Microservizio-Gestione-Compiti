@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
@@ -31,7 +33,7 @@ public class JwtTokenProvider {
                 X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 this.publicKey = keyFactory.generatePublic(spec);
-            } catch (Exception e) {
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 throw new RuntimeException("Errore nel caricamento della chiave pubblica JWT", e);
             }
         }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Package name="~it\.unimol\.newunimol\.gestionecompiti\.dto.*"/>
+    </Match>
+
+    <Match>
+        <Package name="~it\.unimol\.newunimol\.gestionecompiti\.config.*"/>
+    </Match>
+
+    <Match>
+        <Package name="~it\.unimol\.newunimol\.gestionecompiti\.exception.*"/>
+    </Match>
+
+</FindBugsFilter>

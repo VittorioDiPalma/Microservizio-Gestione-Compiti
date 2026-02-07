@@ -8,6 +8,8 @@ import java.io.Serializable;
  */
 public class CourseDeletedEvent implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+    
     private String eventType;
     private String courseId;
     private String courseName;
