@@ -1,0 +1,46 @@
+# Maven build artifacts
+target/
+!target/*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Documentation
+*.md
+README.md
+LICENSE
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment file
+.env
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Uploads directory
+uploads/
+
+# GitHub workflows
+.github/
+
+# Configuration files not needed in image
+checkstyle.xml
+spotbugs-exclude.xml
