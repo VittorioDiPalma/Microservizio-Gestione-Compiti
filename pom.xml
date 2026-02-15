@@ -6,11 +6,11 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.5.8</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>it.unimol</groupId>
 	<artifactId>newunimol</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>newunimol</name>
 	<description>Ambiente per il progetto Gestione Compiti</description>
 	<url/>
@@ -109,7 +109,6 @@
 			<version>1.18.38</version>
 			<scope>provided</scope>
 		</dependency>
-		
 	</dependencies>
 
 	<build>
@@ -143,7 +142,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- JaCoCo Maven Plugin for Code Coverage -->
+			<!-- JaCoCo Maven Plugin -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -155,7 +154,6 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-
 					<execution>
 						<id>report</id>
 						<phase>test</phase>
@@ -163,7 +161,6 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
-
 					<execution>
 						<id>check</id>
 						<goals>
@@ -187,19 +184,19 @@
 				</executions>
 				<configuration>
 					<excludes>
-						<exclude>**/dto/**/*.class</exclude>						
-						<exclude>**/model/**/*.class</exclude>						
-						<exclude>**/config/**/*.class</exclude>					
+						<exclude>**/dto/**/*.class</exclude>
+						<exclude>**/model/**/*.class</exclude>
+						<exclude>**/config/**/*.class</exclude>
 						<exclude>**/exception/**/*.class</exclude>
 						<exclude>**/security/**/*.class</exclude>
 						<exclude>**/controller/**/*.class</exclude>
-						<exclude>**/client/**/*.class</exclude>						
+						<exclude>**/client/**/*.class</exclude>
 						<exclude>**/messaging/**/*.class</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
 
-			<!-- SpotBugs Maven Plugin for Static Code Analysis -->
+			<!-- SpotBugs Maven Plugin -->
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
@@ -223,7 +220,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Checkstyle Maven Plugin for Code Style Analysis -->
+			<!-- Checkstyle Maven Plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
