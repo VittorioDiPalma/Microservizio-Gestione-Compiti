@@ -53,29 +53,34 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - ./.env
+    image: gestione-compiti:latest
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      # Database
+      DB_URL: jdbc:postgresql://postgres:5432/gestione_compiti
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      # JWT
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      # Microservizi esterni
+      GESTIONE_CORSI_URL: http://host.docker.internal:8082
+      GESTIONE_ISCRIZIONI_URL: http://host.docker.internal:8083
+      # RabbitMQ
       RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      # Upload
+      FILE_UPLOAD_DIR: uploads
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+      - postgres
+      - rabbitmq
     networks:
       - app-network
     volumes:
       - ./uploads:/app/uploads
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     deploy:
       replicas: 3
       placement:
@@ -93,4 +98,4 @@ volumes:
 
 networks:
   app-network:
-    driver: bridge
+    driver: overlay
