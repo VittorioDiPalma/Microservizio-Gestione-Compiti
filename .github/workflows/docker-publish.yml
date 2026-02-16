@@ -48,28 +48,37 @@ jobs:
         run: docker swarm init
 
       - name: Deploy stack
-        run: |
-          docker stack deploy -c docker-compose.yml gestione-compiti
-          sleep 45
+        run: docker stack deploy -c docker-compose.yml gestione-compiti
 
-      - name: Verify service status
+      - name: Wait for services to be ready
         run: |
+          echo "Waiting for 3/3 replicas to be running..."
+          RETRY_COUNT=0
+          MAX_RETRIES=24
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            REPLICAS=$(docker service ls --filter name=gestione-compiti_gestione-compiti --format "{{.Replicas}}")
+            echo "Attempt $((RETRY_COUNT+1))/$MAX_RETRIES - Status: $REPLICAS"
+            
+            if [[ "$REPLICAS" =~ "3/3" ]]; then
+              echo "SUCCESS: All 3 replicas are running"
+              exit 0
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT+1))
+            sleep 10
+          done
+          
+          echo "TIMEOUT: Services did not reach 3/3 replicas after $((MAX_RETRIES*10)) seconds"
           docker service ls
           docker service ps gestione-compiti_gestione-compiti --no-trunc
+          docker service logs gestione-compiti_gestione-compiti --tail 100
+          exit 1
 
-      - name: Check replicas count
+      - name: Verify final status
         run: |
-          REPLICAS=$(docker service ls --filter name=gestione-compiti_gestione-compiti --format "{{.Replicas}}")
-          echo "Replicas status: $REPLICAS"
-          if [[ ! "$REPLICAS" =~ "3/3" ]]; then
-            echo "ERROR: Expected 3/3 replicas, found: $REPLICAS"
-            docker service logs gestione-compiti_gestione-compiti --tail 50
-            exit 1
-          fi
-
-      - name: Service logs on failure
-        if: failure()
-        run: docker service logs gestione-compiti_gestione-compiti --tail 100
+          docker service ls
+          docker service ps gestione-compiti_gestione-compiti
 
       - name: Cleanup resources
         if: always()
