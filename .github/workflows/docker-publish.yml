@@ -1,87 +1,79 @@
-name: Docker Build and Push
+name: Docker Swarm Deployment Test
 
 on:
   push:
-    branches:
-      - main
-  release:
-    types: [published]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  docker:
+  docker-swarm-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-      security-events: write
 
     steps:
-      # 1. Scarica il codice dal repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Configura Docker Buildx (build ottimizzato)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 3. Login a GitHub Container Registry
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # 4. Estrai metadata (tag e label per Docker)
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository_owner }}/gestione-compiti
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      # 5. Build e Push immagine Docker
-      - name: Build and push Docker image
-        id: build
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: ${{ github.event_name == 'release' || github.ref == 'refs/heads/main' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          load: true
+          tags: gestione-compiti:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # 6. Scan vulnerabilità con Trivy (solo su release)
-      - name: Run Trivy vulnerability scanner
-        if: github.event_name == 'release'
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/gestione-compiti:latest
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      # 7. Upload risultati scan su GitHub Security
-      - name: Upload Trivy results to GitHub Security
-        if: github.event_name == 'release'
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      # 8. Stampa informazioni immagine (LOG)
-      - name: Image digest
+      - name: Create environment file
         run: |
-          echo "### 🐳 Docker Image Published" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`ghcr.io/${{ github.repository_owner }}/gestione-compiti\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Tags:** \`${{ steps.meta.outputs.tags }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Pull command:**" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/${{ github.repository_owner }}/gestione-compiti:latest" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat << EOF > .env
+          POSTGRES_DB=gestione_compiti_db
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=postgres_password
+          JWT_PRIVATE_KEY=test_private_key
+          JWT_PUBLIC_KEY=test_public_key
+          JWT_EXPIRATION=86400
+          RABBITMQ_USER=guest
+          RABBITMQ_PASSWORD=guest
+          RABBITMQ_HOST=rabbitmq
+          RABBITMQ_PORT=5672
+          EOF
+
+      - name: Initialize Docker Swarm
+        run: docker swarm init
+
+      - name: Deploy stack
+        run: |
+          docker stack deploy -c docker-compose.yml gestione-compiti
+          sleep 45
+
+      - name: Verify service status
+        run: |
+          docker service ls
+          docker service ps gestione-compiti_gestione-compiti --no-trunc
+
+      - name: Check replicas count
+        run: |
+          REPLICAS=$(docker service ls --filter name=gestione-compiti_gestione-compiti --format "{{.Replicas}}")
+          echo "Replicas status: $REPLICAS"
+          if [[ ! "$REPLICAS" =~ "3/3" ]]; then
+            echo "ERROR: Expected 3/3 replicas, found: $REPLICAS"
+            docker service logs gestione-compiti_gestione-compiti --tail 50
+            exit 1
+          fi
+
+      - name: Service logs on failure
+        if: failure()
+        run: docker service logs gestione-compiti_gestione-compiti --tail 100
+
+      - name: Cleanup resources
+        if: always()
+        run: |
+          docker stack rm gestione-compiti
+          sleep 10
+          docker swarm leave --force
